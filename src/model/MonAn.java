@@ -7,8 +7,28 @@ public class MonAn {
     private String trangThai;
     private String moTa;
     private String hinhAnh;
+    private Integer id_thumuc;
+    private Integer tonKhaDung;
 
-    public MonAn() {}
+
+    public MonAn() {
+    }
+
+    public Integer getId_thumuc() {
+        return id_thumuc;
+    }
+
+    public void setId_thumuc(Integer id_thumuc) {
+        this.id_thumuc = id_thumuc;
+    }
+
+    public Integer getTonKhaDung() {
+        return tonKhaDung;
+    }
+
+    public void setTonKhaDung(Integer tonKhaDung) {
+        this.tonKhaDung = tonKhaDung;
+    }
 
     public int getId() {
         return id;

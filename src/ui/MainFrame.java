@@ -33,11 +33,13 @@ public class MainFrame extends JFrame {
         JButton btnTaiKhoan = createMenuButton("Quản lý tài khoản", "/user.png");
         JButton btnNhapSanPham = createMenuButton("Nhập sản phẩm", "/box.jpg");
         JButton btnRanking = createMenuButton("Xếp hạng", "/ranking.png");
+        JButton btnOrder = createMenuButton("Đơn hàng", "/order.png");
 
         menuPanel.add(btnDashboard);
         menuPanel.add(btnTaiKhoan);
         menuPanel.add(btnNhapSanPham);
         menuPanel.add(btnRanking);
+        menuPanel.add(btnOrder);
         add(menuPanel, BorderLayout.WEST);
 
         // ===== CONTENT HIỂN THỊ =====
@@ -46,13 +48,14 @@ public class MainFrame extends JFrame {
         add(contentPanel, BorderLayout.CENTER);
 
         // ===== HIỂN THỊ MẶC ĐỊNH =====
-        showPanel(new QuanLyTaiKhoanPanel());
+        showPanel(new DonHangPanel());
 
         // ===== XỬ LÝ NHẤN MENU =====
         btnDashboard.addActionListener(e -> showPanel(new DashboardPanel()));
         btnTaiKhoan.addActionListener(e -> showPanel(new QuanLyTaiKhoanPanel()));
         btnNhapSanPham.addActionListener(e -> showPanel(new NhapSanPhamPanel()));
         btnRanking.addActionListener(e -> showPanel(new CapBacPanel()));
+        btnOrder.addActionListener(e -> showPanel(new DonHangPanel()));
 
         setVisible(true);
     }

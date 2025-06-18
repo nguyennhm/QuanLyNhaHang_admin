@@ -5,18 +5,28 @@ import java.time.LocalDateTime;
 public class Order {
     private int id;
     private int banAnId;
-    private int khachHangId;
+    private int id_nhanvien;
     private LocalDateTime thoiGianTao;
     private String trangThai;
+    private String ghiChu;
 
     public Order() {}
 
-    public Order(int id, int banAnId, int khachHangId, LocalDateTime thoiGianTao, String trangThai) {
+    public Order(int id, int banAnId, int id_nhanvien, LocalDateTime thoiGianTao, String trangThai, String ghiChu) {
         this.id = id;
         this.banAnId = banAnId;
-        this.khachHangId = khachHangId;
+        this.id_nhanvien = id_nhanvien;
         this.thoiGianTao = thoiGianTao;
         this.trangThai = trangThai;
+        this.ghiChu= ghiChu;
+    }
+
+    public String getGhiChu() {
+        return ghiChu;
+    }
+
+    public void setGhiChu(String ghiChu) {
+        this.ghiChu = ghiChu;
     }
 
     public int getId() {
@@ -35,12 +45,13 @@ public class Order {
         this.banAnId = banAnId;
     }
 
-    public int getKhachHangId() {
-        return khachHangId;
+
+    public int getId_nhanvien() {
+        return id_nhanvien;
     }
 
-    public void setKhachHangId(int khachHangId) {
-        this.khachHangId = khachHangId;
+    public void setId_nhanvien(int id_nhanvien) {
+        this.id_nhanvien = id_nhanvien;
     }
 
     public LocalDateTime getThoiGianTao() {

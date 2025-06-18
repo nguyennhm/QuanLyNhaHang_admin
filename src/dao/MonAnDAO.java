@@ -27,6 +27,8 @@ public class MonAnDAO {
                 mon.setTrangThai(rs.getString("trangThai"));
                 mon.setMoTa(rs.getString("moTa"));
                 mon.setHinhAnh(rs.getString("hinhAnh"));
+                mon.setId_thumuc(rs.getInt("id_thumuc"));
+                mon.setTonKhaDung(rs.getInt("tonKhaDung"));
                 list.add(mon);
             }
         } catch (SQLException e) {
