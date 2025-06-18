@@ -3,6 +3,7 @@ package ui;
 import dao.TaiKhoanDAO;
 import service.MaXacNhanManager;
 import utils.EmailSender;
+import utils.HashUtil;
 
 import javax.swing.*;
 import java.awt.*;

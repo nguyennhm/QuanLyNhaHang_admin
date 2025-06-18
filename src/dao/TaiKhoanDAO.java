@@ -24,7 +24,7 @@ public class TaiKhoanDAO {
                         rs.getString("email"),
                         rs.getString("matKhau"),
                         rs.getString("vaiTro"),
-                        rs.getBoolean("trangThai")
+                        rs.getString("trangThai")
                 );
             }
 
@@ -66,7 +66,7 @@ public class TaiKhoanDAO {
             stmt.setString(1, tk.getEmail());
             stmt.setString(2, tk.getMatKhau());
             stmt.setString(3, tk.getVaiTro());
-            stmt.setBoolean(4, tk.isTrangThai());
+            stmt.setString(4, tk.isTrangThai());
 
             int rows = stmt.executeUpdate();
             JDBCUtil.closeConnection(conn);
@@ -77,16 +77,21 @@ public class TaiKhoanDAO {
         }
     }
 
-    public static void capNhatMatKhau(String email, String newPassword) {
-        try (Connection conn = JDBCUtil.getConnection()) {
-            String sql = "UPDATE TaiKhoan SET matKhau = ? WHERE email = ?";
-            PreparedStatement stmt = conn.prepareStatement(sql);
-            stmt.setString(1, newPassword); // có thể mã hóa nếu muốn
-            stmt.setString(2, email);
-            stmt.executeUpdate();
-        } catch (SQLException e) {
+    public static boolean capNhatMatKhau(String email, String matKhauMaHoa) {
+        try {
+            Connection conn = JDBCUtil.getConnection();
+            String sql = "UPDATE taikhoan SET matkhau = ? WHERE email = ?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, matKhauMaHoa);
+            ps.setString(2, email);
+
+            int rows = ps.executeUpdate();
+            JDBCUtil.closeConnection(conn);
+            return rows > 0;
+        } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException(e);
+            return false;
         }
     }
+
 }

@@ -4,14 +4,22 @@ public class NguyenLieu {
     private int id;
     private String tenNguyenLieu;
     private String donViTinh;
-    private int soLuongTon;
+    private double soLuongTon;
+    private int giaNhap;
 
+    public int getGiaNhap() {
+        return giaNhap;
+    }
 
-    public int getSoLuongTon() {
+    public void setGiaNhap(int giaNhap) {
+        this.giaNhap = giaNhap;
+    }
+
+    public double getSoLuongTon() {
         return soLuongTon;
     }
 
-    public void setSoLuongTon(int soLuongTon) {
+    public void setSoLuongTon(double soLuongTon) {
         this.soLuongTon = soLuongTon;
     }
 
@@ -40,9 +48,10 @@ public class NguyenLieu {
     }
 
 
-    public NguyenLieu() {}
+    public NguyenLieu() {
+    }
 
-    public NguyenLieu(int id, String tenNguyenLieu, String donViTinh, int soLuongTon) {
+    public NguyenLieu(int id, String tenNguyenLieu, String donViTinh, double soLuongTon) {
         this.id = id;
         this.tenNguyenLieu = tenNguyenLieu;
         this.donViTinh = donViTinh;

@@ -156,6 +156,12 @@ public class RegisterUI extends JFrame {
             return;
         }
 
+        String gmailRegex = "^[\\w.+\\-]+@gmail\\.com$";
+        if (!email.matches(gmailRegex)) {
+            JOptionPane.showMessageDialog(this, "Email phải có định dạng @gmail.com hợp lệ!");
+            return;
+        }
+
         if (!matKhau.equals(xacNhan)) {
             JOptionPane.showMessageDialog(this, "Mật khẩu không khớp!");
             return;
@@ -167,7 +173,7 @@ public class RegisterUI extends JFrame {
         }
 
         String hashed = HashUtil.sha256(matKhau);
-        TaiKhoan taiKhoan = new TaiKhoan(email, hashed, "admin", true);
+        TaiKhoan taiKhoan = new TaiKhoan(email, hashed, "admin", "mo");
         boolean thanhCong = TaiKhoanDAO.dangKyTaiKhoan(taiKhoan);
 
         if (thanhCong) {

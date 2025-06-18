@@ -5,7 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class JDBCUtil {
-    private static final String URL = "jdbc:mysql://localhost:3306/qlnh"; // Tên database là qlnh
+    private static final String URL = "jdbc:mysql://localhost:3306/quan_li_nha_hang"; // Tên database là quan_li_nha_hang
     private static final String USER = "root"; // Thay bằng username của bạn
     private static final String PASSWORD = "22032005"; // Thay bằng mật khẩu của bạn
 

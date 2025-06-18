@@ -156,8 +156,10 @@ public class LoginUI extends JFrame {
         String hashed = HashUtil.sha256(matKhau);
         TaiKhoan tk = TaiKhoanDAO.kiemTraDangNhap(email, hashed);
 
-        if (tk != null && tk.isTrangThai()) {
+        if (tk != null && tk.isTrangThai().equals("mo") && tk.getVaiTro().equals("admin")) {
             JOptionPane.showMessageDialog(this, "✅ Đăng nhập thành công!");
+            dispose();
+            new MainFrame();
             // TODO: Mở dashboard
         } else {
             JOptionPane.showMessageDialog(this, "❌ Email hoặc mật khẩu sai!");

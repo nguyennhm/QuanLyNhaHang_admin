@@ -4,9 +4,9 @@ public class TaiKhoan {
     private String email;
     private String matKhau;
     private String vaiTro;
-    private boolean trangThai;
+    private String trangThai;
 
-    public TaiKhoan(String email, String matKhau, String vaiTro, boolean trangThai) {
+    public TaiKhoan(String email, String matKhau, String vaiTro, String trangThai) {
         this.email = email;
         this.matKhau = matKhau;
         this.vaiTro = vaiTro;
@@ -38,11 +38,11 @@ public class TaiKhoan {
         this.vaiTro = vaiTro;
     }
 
-    public boolean isTrangThai() {
+    public String isTrangThai() {
         return trangThai;
     }
 
-    public void setTrangThai(boolean trangThai) {
+    public void setTrangThai(String trangThai) {
         this.trangThai = trangThai;
     }
 }
