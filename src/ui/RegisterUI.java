@@ -95,12 +95,12 @@ public class RegisterUI extends JFrame {
         // Nút đăng ký
         registerButton = new JButton("Đăng ký");
         registerButton.setPreferredSize(new Dimension(120, 40));
-        registerButton.setBackground(Color.BLUE);
-        registerButton.setForeground(Color.DARK_GRAY);
+        registerButton.setBackground(new Color(30, 90, 180));
+        registerButton.setForeground(Color.WHITE);
         registerButton.setFocusPainted(false);
         registerButton.setFont(new Font("Segoe UI", Font.BOLD, 14));
         registerButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        registerButton.addActionListener(e -> dangKy()); // Gọi hàm xử lý
+        registerButton.addActionListener(e -> dangKy());
         registerButton.addMouseListener(new MouseAdapter() {
             public void mouseEntered(MouseEvent e) {
                 registerButton.setBackground(new Color(20, 70, 150));
@@ -115,8 +115,8 @@ public class RegisterUI extends JFrame {
         // Nút quay lại đăng nhập
         backButton = new JButton("Quay lại");
         backButton.setPreferredSize(new Dimension(120, 40));
-        backButton.setBackground(Color.LIGHT_GRAY);
-        backButton.setForeground(Color.DARK_GRAY);
+        backButton.setBackground(new Color(240, 240, 240));
+        backButton.setForeground(Color.BLACK);
         backButton.setFocusPainted(false);
         backButton.setFont(new Font("Segoe UI", Font.BOLD, 14));
         backButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -135,7 +135,6 @@ public class RegisterUI extends JFrame {
         });
         buttonPanel.add(backButton);
 
-        // Thêm panel nút vào form
         gbc.gridy++;
         gbc.gridwidth = 2;
         formPanel.add(buttonPanel, gbc);
@@ -148,8 +147,8 @@ public class RegisterUI extends JFrame {
     private void dangKy() {
         String hoTen = hoTenField.getText().trim();
         String email = emailField.getText().trim();
-        String matKhau = new String(passwordField.getPassword());
-        String xacNhan = new String(confirmPasswordField.getPassword());
+        String matKhau = new String(passwordField.getPassword()).trim();
+        String xacNhan = new String(confirmPasswordField.getPassword()).trim();
 
         if (hoTen.isEmpty() || email.isEmpty() || matKhau.isEmpty() || xacNhan.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Vui lòng điền đầy đủ thông tin!");
@@ -173,7 +172,8 @@ public class RegisterUI extends JFrame {
         }
 
         String hashed = HashUtil.sha256(matKhau);
-        TaiKhoan taiKhoan = new TaiKhoan(email, hashed, "admin", "mo");
+        // Note: hoTen is not stored in TaiKhoan. Consider storing it in Nhanvien or another table.
+        TaiKhoan taiKhoan = new TaiKhoan(email, hashed, "Nhân viên", "Hoạt động");
         boolean thanhCong = TaiKhoanDAO.dangKyTaiKhoan(taiKhoan);
 
         if (thanhCong) {
@@ -186,6 +186,6 @@ public class RegisterUI extends JFrame {
     }
 
     public static void main(String[] args) {
-        new RegisterUI();
+        SwingUtilities.invokeLater(() -> new RegisterUI());
     }
 }

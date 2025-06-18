@@ -1,19 +1,27 @@
 package model;
 
 public class XepHangKhachHang {
+    private int id;
     private String capBac;
-    private int minTongChiTieu;
-    private String uuDai;
+    private int dieuKienDiem;
+    private float uuDai;
 
     public XepHangKhachHang() {}
 
-    public XepHangKhachHang(String capBac, int minTongChiTieu, String uuDai) {
+    public XepHangKhachHang(int id, String capBac, int dieuKienDiem, float uuDai) {
+        this.id = id;
         this.capBac = capBac;
-        this.minTongChiTieu = minTongChiTieu;
+        this.dieuKienDiem = dieuKienDiem;
         this.uuDai = uuDai;
     }
 
-    // Getter, Setter
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getCapBac() {
         return capBac;
@@ -23,19 +31,19 @@ public class XepHangKhachHang {
         this.capBac = capBac;
     }
 
-    public int getMinTongChiTieu() {
-        return minTongChiTieu;
+    public int getdieuKienDiem() {
+        return dieuKienDiem;
     }
 
-    public void setMinTongChiTieu(int minTongChiTieu) {
-        this.minTongChiTieu = minTongChiTieu;
+    public void setdieuKienDiem(int dieuKienDiem) {
+        this.dieuKienDiem = dieuKienDiem;
     }
 
-    public String getUuDai() {
+    public float getUuDai() {
         return uuDai;
     }
 
-    public void setUuDai(String uuDai) {
+    public void setUuDai(float uuDai) {
         this.uuDai = uuDai;
     }
 }

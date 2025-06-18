@@ -1,6 +1,9 @@
 package model;
 
 public class TaiKhoan {
+
+
+    private int id_taikhoan;
     private String email;
     private String matKhau;
     private String vaiTro;
@@ -14,6 +17,18 @@ public class TaiKhoan {
     }
 
     // Getters và Setters
+    public int getId_taikhoan() {
+        return id_taikhoan;
+    }
+
+    public void setId_taikhoan(int id_taikhoan) {
+        this.id_taikhoan = id_taikhoan;
+    }
+
+    public String getTrangThai() {
+        return trangThai;
+    }
+
     public String getEmail() {
         return email;
     }
