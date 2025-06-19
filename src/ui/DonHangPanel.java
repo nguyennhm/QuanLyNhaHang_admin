@@ -6,9 +6,10 @@ import model.HoaDon;
 import model.Order;
 
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import java.awt.*;
-import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -24,17 +25,20 @@ public class DonHangPanel extends JPanel {
         hoaDonDAO = new HoaDonDAO();
 
         setLayout(new BorderLayout());
+        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         // 👉 Nút điều hướng căn giữa
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 30, 10));
-        JButton btnDatMon = new JButton("🍽 Đặt món");
-        JButton btnHoaDon = new JButton("🧾 Hóa đơn");
-
-        btnDatMon.setPreferredSize(new Dimension(140, 40));
-        btnHoaDon.setPreferredSize(new Dimension(140, 40));
-        btnDatMon.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        btnHoaDon.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 30, 10)) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2d = (Graphics2D) g;
+                GradientPaint gp = new GradientPaint(0, 0, new Color(240, 240, 240), 0, getHeight(), new Color(200, 200, 200));
+                g2d.setPaint(gp);
+                g2d.fillRect(0, 0, getWidth(), getHeight());
+            }
+        };
+        JButton btnDatMon = createStyledButton("🍽 Đặt món");
+        JButton btnHoaDon = createStyledButton("🧾 Hóa đơn");
         buttonPanel.add(btnDatMon);
         buttonPanel.add(btnHoaDon);
         add(buttonPanel, BorderLayout.NORTH);
@@ -53,14 +57,13 @@ public class DonHangPanel extends JPanel {
 
     private JPanel createOrderPanel() {
         JPanel panel = new JPanel(new BorderLayout());
+        panel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(new Color(150, 150, 150)), "Danh sách đặt món", TitledBorder.CENTER, TitledBorder.TOP, new Font("Segoe UI", Font.BOLD, 14), Color.DARK_GRAY));
 
-        tableOrder = new JTable();
+        tableOrder = createStyledTable();
         loadOrderData();
-
         JScrollPane scrollPane = new JScrollPane(tableOrder);
         panel.add(scrollPane, BorderLayout.CENTER);
 
-        // 👉 Click row → mở JFrame hiển thị chi tiết order
         tableOrder.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
                 int selectedRow = tableOrder.getSelectedRow();
@@ -75,7 +78,7 @@ public class DonHangPanel extends JPanel {
     }
 
     private JScrollPane createHoaDonPanel() {
-        tableHoaDon = new JTable();
+        tableHoaDon = createStyledTable();
         loadHoaDonData();
         tableHoaDon.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
@@ -87,7 +90,9 @@ public class DonHangPanel extends JPanel {
             }
         });
 
-        return new JScrollPane(tableHoaDon);
+        JScrollPane scrollPane = new JScrollPane(tableHoaDon);
+        scrollPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(new Color(150, 150, 150)), "Danh sách hóa đơn", TitledBorder.CENTER, TitledBorder.TOP, new Font("Segoe UI", Font.BOLD, 14), Color.DARK_GRAY));
+        return scrollPane;
     }
 
     private void loadOrderData() {
@@ -113,6 +118,7 @@ public class DonHangPanel extends JPanel {
         };
         tableOrder.setModel(model);
         tableOrder.getTableHeader().setReorderingAllowed(false);
+        adjustColumnWidths(tableOrder);
     }
 
     private void loadHoaDonData() {
@@ -135,9 +141,44 @@ public class DonHangPanel extends JPanel {
                 return false;
             }
         };
-
         tableHoaDon.setModel(model);
         tableHoaDon.getTableHeader().setReorderingAllowed(false);
+        adjustColumnWidths(tableHoaDon);
     }
 
+    private JTable createStyledTable() {
+        JTable t = new JTable();
+        JTableHeader header = t.getTableHeader();
+        header.setReorderingAllowed(false);
+        header.setBackground(new Color(240, 240, 240));
+        header.setForeground(Color.DARK_GRAY);
+        t.setRowHeight(25);
+        t.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        t.setShowGrid(true);
+        t.setGridColor(new Color(200, 200, 200));
+        return t;
+    }
+
+    private JButton createStyledButton(String text) {
+        JButton button = new JButton(text);
+        button.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        button.setBackground(new Color(0, 120, 215));
+        button.setForeground(Color.WHITE);
+        button.setFocusPainted(false);
+        button.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(0, 100, 200), 1),
+                BorderFactory.createEmptyBorder(5, 15, 5, 15)
+        ));
+        return button;
+    }
+
+    private void adjustColumnWidths(JTable table) {
+        table.getColumnModel().getColumn(0).setPreferredWidth(50); // ID
+        if (table == tableOrder) {
+            table.getColumnModel().getColumn(3).setPreferredWidth(120); // Ngày tạo
+        } else if (table == tableHoaDon) {
+            table.getColumnModel().getColumn(2).setPreferredWidth(100); // Tổng tiền
+            table.getColumnModel().getColumn(3).setPreferredWidth(120); // Thời gian thanh toán
+        }
+    }
 }

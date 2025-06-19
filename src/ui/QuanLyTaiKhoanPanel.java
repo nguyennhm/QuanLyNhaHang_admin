@@ -13,11 +13,20 @@ public class QuanLyTaiKhoanPanel extends JPanel {
 
     public QuanLyTaiKhoanPanel() {
         setLayout(new BorderLayout());
+        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // Panel chứa các nút chuyển đổi
-        JPanel switchPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
-        JButton btnNhanVien = new JButton("Nhân viên");
-        JButton btnKhachHang = new JButton("Khách hàng");
+        // Panel chứa các nút chuyển đổi với gradient
+        JPanel switchPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10)) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2d = (Graphics2D) g;
+                GradientPaint gp = new GradientPaint(0, 0, new Color(240, 240, 240), 0, getHeight(), new Color(200, 200, 200));
+                g2d.setPaint(gp);
+                g2d.fillRect(0, 0, getWidth(), getHeight());
+            }
+        };
+        JButton btnNhanVien = createStyledButton("Nhân viên");
+        JButton btnKhachHang = createStyledButton("Khách hàng");
         switchPanel.add(btnNhanVien);
         switchPanel.add(btnKhachHang);
         add(switchPanel, BorderLayout.NORTH);
@@ -78,5 +87,18 @@ public class QuanLyTaiKhoanPanel extends JPanel {
                 }
             }
         });
+    }
+
+    private JButton createStyledButton(String text) {
+        JButton button = new JButton(text);
+        button.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        button.setBackground(new Color(0, 120, 215));
+        button.setForeground(Color.WHITE);
+        button.setFocusPainted(false);
+        button.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(0, 100, 200), 1),
+                BorderFactory.createEmptyBorder(5, 15, 5, 15)
+        ));
+        return button;
     }
 }

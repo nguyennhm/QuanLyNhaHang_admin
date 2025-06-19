@@ -21,11 +21,20 @@ public class NhapSanPhamPanel extends JPanel {
 
     public NhapSanPhamPanel() {
         setLayout(new BorderLayout());
+        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // ==== Nút chuyển panel ====
-        JPanel switchPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
-        JButton btnNguyenLieu = new JButton("Nguyên liệu");
-        JButton btnMonAn = new JButton("Món ăn");
+        // ==== Nút chuyển panel với gradient ====
+        JPanel switchPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10)) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2d = (Graphics2D) g;
+                GradientPaint gp = new GradientPaint(0, 0, new Color(240, 240, 240), 0, getHeight(), new Color(200, 200, 200));
+                g2d.setPaint(gp);
+                g2d.fillRect(0, 0, getWidth(), getHeight());
+            }
+        };
+        JButton btnNguyenLieu = createStyledButton("Nguyên liệu");
+        JButton btnMonAn = createStyledButton("Món ăn");
         switchPanel.add(btnNguyenLieu);
         switchPanel.add(btnMonAn);
         add(switchPanel, BorderLayout.NORTH);
@@ -107,6 +116,25 @@ public class NhapSanPhamPanel extends JPanel {
         JTable table = new JTable(model);
         JTableHeader header = table.getTableHeader();
         header.setReorderingAllowed(false);
+        header.setBackground(new Color(240, 240, 240));
+        header.setForeground(Color.DARK_GRAY);
+        table.setRowHeight(25);
+        table.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        table.setShowGrid(true);
+        table.setGridColor(new Color(200, 200, 200));
         return table;
+    }
+
+    private JButton createStyledButton(String text) {
+        JButton button = new JButton(text);
+        button.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        button.setBackground(new Color(0, 120, 215));
+        button.setForeground(Color.WHITE);
+        button.setFocusPainted(false);
+        button.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(0, 100, 200), 1),
+                BorderFactory.createEmptyBorder(5, 15, 5, 15)
+        ));
+        return button;
     }
 }

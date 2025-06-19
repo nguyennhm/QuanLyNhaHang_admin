@@ -5,6 +5,7 @@ import model.NguyenLieu;
 import utils.JDBCUtil;
 
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import java.awt.*;
@@ -19,20 +20,21 @@ public class NguyenLieuPanel extends JPanel {
     public NguyenLieuPanel() {
         dao = new NguyenLieuDAO(JDBCUtil.getConnection());
         setLayout(new BorderLayout());
-        setBorder(BorderFactory.createTitledBorder("Danh sách nguyên liệu"));
+        setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(new Color(150, 150, 150)), "Danh sách nguyên liệu", TitledBorder.CENTER, TitledBorder.TOP, new Font("Segoe UI", Font.BOLD, 14), Color.DARK_GRAY));
 
-        table = createNonEditableTable();
+        table = createStyledTable();
         reloadTable();
         add(new JScrollPane(table), BorderLayout.CENTER);
 
         // === Nút thêm và xóa ===
-        JButton btnThem = new JButton("➕ Thêm nguyên liệu");
+        JButton btnThem = createStyledButton("➕ Thêm nguyên liệu");
         btnThem.addActionListener(e -> showFormThem());
 
-        JButton btnXoa = new JButton("🗑 Xóa nguyên liệu");
+        JButton btnXoa = createStyledButton("🗑 Xóa nguyên liệu");
         btnXoa.addActionListener(e -> xoaNguyenLieu());
 
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        btnPanel.setBackground(new Color(245, 245, 245));
         btnPanel.add(btnThem);
         btnPanel.add(btnXoa);
         add(btnPanel, BorderLayout.SOUTH);
@@ -57,16 +59,18 @@ public class NguyenLieuPanel extends JPanel {
         DefaultTableModel model = new DefaultTableModel(data, cols) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false; // khóa chỉnh sửa
+                return false;
             }
         };
         table.setModel(model);
+        adjustColumnWidths();
     }
 
     private void showFormThem() {
         JFrame f = new JFrame("Thêm nguyên liệu");
         f.setSize(400, 300);
         f.setLocationRelativeTo(this);
+        f.getContentPane().setBackground(new Color(240, 240, 240));
         f.setLayout(new GridLayout(5, 2, 10, 10));
 
         JTextField tfTen = new JTextField();
@@ -74,12 +78,16 @@ public class NguyenLieuPanel extends JPanel {
         JTextField tfSoLuong = new JTextField();
         JTextField tfGiaNhap = new JTextField();
 
-        f.add(new JLabel("Tên nguyên liệu:")); f.add(tfTen);
-        f.add(new JLabel("Đơn vị:")); f.add(cbDonVi);
-        f.add(new JLabel("Số lượng:")); f.add(tfSoLuong);
-        f.add(new JLabel("Giá nhập (VNĐ):")); f.add(tfGiaNhap);
+        f.add(createLabel("Tên nguyên liệu:"));
+        f.add(tfTen);
+        f.add(createLabel("Đơn vị:"));
+        f.add(cbDonVi);
+        f.add(createLabel("Số lượng:"));
+        f.add(tfSoLuong);
+        f.add(createLabel("Giá nhập (VNĐ):"));
+        f.add(tfGiaNhap);
 
-        JButton btnLuu = new JButton("Lưu");
+        JButton btnLuu = createStyledButton("Lưu");
         btnLuu.addActionListener(e -> {
             try {
                 NguyenLieu nl = new NguyenLieu();
@@ -92,18 +100,19 @@ public class NguyenLieuPanel extends JPanel {
                 clearForm(tfTen, tfSoLuong, tfGiaNhap);
                 f.dispose();
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(f, "❌ Lỗi nhập liệu: " + ex.getMessage());
+                JOptionPane.showMessageDialog(f, "❌ Lỗi nhập liệu: " + ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
             }
         });
 
-        f.add(new JLabel()); f.add(btnLuu);
+        f.add(new JLabel());
+        f.add(btnLuu);
         f.setVisible(true);
     }
 
     private void xoaNguyenLieu() {
         int selectedRow = table.getSelectedRow();
         if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(this, "⚠ Vui lòng chọn nguyên liệu cần xóa.");
+            JOptionPane.showMessageDialog(this, "⚠ Vui lòng chọn nguyên liệu cần xóa.", "Thông báo", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
@@ -112,24 +121,50 @@ public class NguyenLieuPanel extends JPanel {
 
         int confirm = JOptionPane.showConfirmDialog(this,
                 "Bạn có chắc chắn muốn xóa nguyên liệu \"" + ten + "\"?",
-                "Xác nhận xóa", JOptionPane.YES_NO_OPTION);
+                "Xác nhận xóa", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 
         if (confirm == JOptionPane.YES_OPTION) {
             boolean ok = dao.xoaNguyenLieu(id);
             if (ok) {
-                JOptionPane.showMessageDialog(this, "✅ Đã xóa nguyên liệu.");
+                JOptionPane.showMessageDialog(this, "✅ Đã xóa nguyên liệu.", "Thành công", JOptionPane.INFORMATION_MESSAGE);
                 reloadTable();
             } else {
-                JOptionPane.showMessageDialog(this, "❌ Không thể xóa. Nguyên liệu có thể đang được sử dụng.");
+                JOptionPane.showMessageDialog(this, "❌ Không thể xóa. Nguyên liệu có thể đang được sử dụng.", "Lỗi", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
 
-    private JTable createNonEditableTable() {
+    private JTable createStyledTable() {
         JTable t = new JTable();
         JTableHeader header = t.getTableHeader();
         header.setReorderingAllowed(false);
+        header.setBackground(new Color(240, 240, 240));
+        header.setForeground(Color.DARK_GRAY);
+        t.setRowHeight(25);
+        t.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        t.setShowGrid(true);
+        t.setGridColor(new Color(200, 200, 200));
         return t;
+    }
+
+    private JButton createStyledButton(String text) {
+        JButton button = new JButton(text);
+        button.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        button.setBackground(new Color(0, 120, 215));
+        button.setForeground(Color.WHITE);
+        button.setFocusPainted(false);
+        button.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(0, 100, 200), 1),
+                BorderFactory.createEmptyBorder(5, 10, 5, 10)
+        ));
+        return button;
+    }
+
+    private JLabel createLabel(String text) {
+        JLabel label = new JLabel(text);
+        label.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        label.setForeground(Color.DARK_GRAY);
+        return label;
     }
 
     public JTable getTable() {
@@ -140,5 +175,11 @@ public class NguyenLieuPanel extends JPanel {
         for (JTextField field : fields) {
             field.setText("");
         }
+    }
+
+    private void adjustColumnWidths() {
+        table.getColumnModel().getColumn(0).setPreferredWidth(50); // ID
+        table.getColumnModel().getColumn(1).setPreferredWidth(150); // Tên
+        table.getColumnModel().getColumn(4).setPreferredWidth(100); // Giá nhập
     }
 }

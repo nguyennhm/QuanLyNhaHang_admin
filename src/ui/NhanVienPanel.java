@@ -7,6 +7,7 @@ import model.TaiKhoan;
 import utils.JDBCUtil;
 
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import java.awt.*;
@@ -24,20 +25,20 @@ public class NhanVienPanel extends JPanel {
         taiKhoanDAO = new TaiKhoanDAO(JDBCUtil.getConnection());
 
         setLayout(new BorderLayout());
-        setBorder(BorderFactory.createTitledBorder("Danh sách nhân viên"));
+        setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(new Color(150, 150, 150)), "Danh sách nhân viên", TitledBorder.CENTER, TitledBorder.TOP, new Font("Segoe UI", Font.BOLD, 14), Color.DARK_GRAY));
 
-        table = createNonEditableTable();
+        table = createStyledTable();
         reloadTable();
-
         add(new JScrollPane(table), BorderLayout.CENTER);
 
-        JButton btnThem = new JButton("➕ Thêm nhân viên");
+        JButton btnThem = createStyledButton("➕ Thêm nhân viên");
         btnThem.addActionListener(e -> showAddForm());
 
-        JButton btnQuenMatKhau = new JButton("Quên mật khẩu");
+        JButton btnQuenMatKhau = createStyledButton("Quên mật khẩu");
         btnQuenMatKhau.addActionListener(e -> new ForgotPasswordUI());
 
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        btnPanel.setBackground(new Color(245, 245, 245));
         btnPanel.add(btnThem);
         btnPanel.add(btnQuenMatKhau);
         add(btnPanel, BorderLayout.SOUTH);
@@ -65,11 +66,13 @@ public class NhanVienPanel extends JPanel {
             }
         };
         table.setModel(model);
+        adjustColumnWidths();
     }
 
     public void showAddForm() {
         JFrame f = new JFrame("Thêm nhân viên");
         f.setSize(500, 400);
+        f.getContentPane().setBackground(new Color(240, 240, 240));
         f.setLocationRelativeTo(this);
         f.setLayout(new BorderLayout());
 
@@ -83,16 +86,24 @@ public class NhanVienPanel extends JPanel {
         JPasswordField tfMatKhau = new JPasswordField();
         JComboBox<String> cbVaiTro = new JComboBox<>(new String[]{"Nhân viên", "Quản lý"});
 
-        formPanel.add(new JLabel("Tên nhân viên:")); formPanel.add(tfTen);
-        formPanel.add(new JLabel("Số điện thoại:")); formPanel.add(tfSdt);
-        formPanel.add(new JLabel("Địa chỉ:")); formPanel.add(tfDiaChi);
-        formPanel.add(new JLabel("Ngày sinh:")); formPanel.add(tfNgaySinh);
-        formPanel.add(new JLabel("Vị trí:")); formPanel.add(tfViTri);
-        formPanel.add(new JLabel("Email:")); formPanel.add(tfEmail);
-        formPanel.add(new JLabel("Mật khẩu:")); formPanel.add(tfMatKhau);
-        formPanel.add(new JLabel("Vai trò:")); formPanel.add(cbVaiTro);
+        formPanel.add(createLabel("Tên nhân viên:"));
+        formPanel.add(tfTen);
+        formPanel.add(createLabel("Số điện thoại:"));
+        formPanel.add(tfSdt);
+        formPanel.add(createLabel("Địa chỉ:"));
+        formPanel.add(tfDiaChi);
+        formPanel.add(createLabel("Ngày sinh:"));
+        formPanel.add(tfNgaySinh);
+        formPanel.add(createLabel("Vị trí:"));
+        formPanel.add(tfViTri);
+        formPanel.add(createLabel("Email:"));
+        formPanel.add(tfEmail);
+        formPanel.add(createLabel("Mật khẩu:"));
+        formPanel.add(tfMatKhau);
+        formPanel.add(createLabel("Vai trò:"));
+        formPanel.add(cbVaiTro);
 
-        JButton btnLuu = new JButton("Lưu");
+        JButton btnLuu = createStyledButton("Lưu");
         btnLuu.addActionListener(e -> {
             try {
                 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
@@ -117,20 +128,21 @@ public class NhanVienPanel extends JPanel {
                     if (nhanVienOk) {
                         reloadTable();
                         f.dispose();
-                        JOptionPane.showMessageDialog(this, "Thêm nhân viên thành công!");
+                        JOptionPane.showMessageDialog(this, "Thêm nhân viên thành công!", "Thành công", JOptionPane.INFORMATION_MESSAGE);
                     } else {
                         taiKhoanDAO.xoaTaiKhoan(tk.getId_taikhoan());
-                        JOptionPane.showMessageDialog(f, "Thêm nhân viên thất bại!");
+                        JOptionPane.showMessageDialog(f, "Thêm nhân viên thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
                     }
                 } else {
-                    JOptionPane.showMessageDialog(f, "Thêm tài khoản thất bại!");
+                    JOptionPane.showMessageDialog(f, "Thêm tài khoản thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
                 }
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(f, "Lỗi dữ liệu: " + ex.getMessage());
+                JOptionPane.showMessageDialog(f, "Lỗi dữ liệu: " + ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
             }
         });
 
         JPanel bottom = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        bottom.setBackground(new Color(245, 245, 245));
         bottom.add(btnLuu);
 
         f.add(formPanel, BorderLayout.CENTER);
@@ -144,6 +156,7 @@ public class NhanVienPanel extends JPanel {
 
         JFrame f = new JFrame("Chi tiết nhân viên");
         f.setSize(500, 400);
+        f.getContentPane().setBackground(new Color(240, 240, 240));
         f.setLocationRelativeTo(this);
         f.setLayout(new BorderLayout());
 
@@ -160,16 +173,24 @@ public class NhanVienPanel extends JPanel {
         JComboBox<String> cbVaiTro = new JComboBox<>(new String[]{"Nhân viên", "Quản lý"});
         if (tk != null) cbVaiTro.setSelectedItem(tk.getVaiTro());
 
-        formPanel.add(new JLabel("Tên nhân viên:")); formPanel.add(tfTen);
-        formPanel.add(new JLabel("Số điện thoại:")); formPanel.add(tfSdt);
-        formPanel.add(new JLabel("Địa chỉ:")); formPanel.add(tfDiaChi);
-        formPanel.add(new JLabel("Ngày sinh:")); formPanel.add(tfNgaySinh);
-        formPanel.add(new JLabel("Vị trí:")); formPanel.add(tfViTri);
-        formPanel.add(new JLabel("Email:")); formPanel.add(tfEmail);
-        formPanel.add(new JLabel("Mật khẩu:")); formPanel.add(tfMatKhau);
-        formPanel.add(new JLabel("Vai trò:")); formPanel.add(cbVaiTro);
+        formPanel.add(createLabel("Tên nhân viên:"));
+        formPanel.add(tfTen);
+        formPanel.add(createLabel("Số điện thoại:"));
+        formPanel.add(tfSdt);
+        formPanel.add(createLabel("Địa chỉ:"));
+        formPanel.add(tfDiaChi);
+        formPanel.add(createLabel("Ngày sinh:"));
+        formPanel.add(tfNgaySinh);
+        formPanel.add(createLabel("Vị trí:"));
+        formPanel.add(tfViTri);
+        formPanel.add(createLabel("Email:"));
+        formPanel.add(tfEmail);
+        formPanel.add(createLabel("Mật khẩu:"));
+        formPanel.add(tfMatKhau);
+        formPanel.add(createLabel("Vai trò:"));
+        formPanel.add(cbVaiTro);
 
-        JButton btnLuu = new JButton("Cập nhật");
+        JButton btnLuu = createStyledButton("Cập nhật");
         btnLuu.addActionListener(e -> {
             try {
                 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
@@ -188,17 +209,18 @@ public class NhanVienPanel extends JPanel {
                     if (taiKhoanOk && nhanVienOk) {
                         reloadTable();
                         f.dispose();
-                        JOptionPane.showMessageDialog(this, "Cập nhật thành công!");
+                        JOptionPane.showMessageDialog(this, "Cập nhật thành công!", "Thành công", JOptionPane.INFORMATION_MESSAGE);
                     } else {
-                        JOptionPane.showMessageDialog(f, "Cập nhật thất bại!");
+                        JOptionPane.showMessageDialog(f, "Cập nhật thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
                     }
                 }
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(f, "Lỗi dữ liệu: " + ex.getMessage());
+                JOptionPane.showMessageDialog(f, "Lỗi dữ liệu: " + ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
             }
         });
 
         JPanel bottom = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        bottom.setBackground(new Color(245, 245, 245));
         bottom.add(btnLuu);
 
         f.add(formPanel, BorderLayout.CENTER);
@@ -206,14 +228,46 @@ public class NhanVienPanel extends JPanel {
         f.setVisible(true);
     }
 
-    private JTable createNonEditableTable() {
+    private JTable createStyledTable() {
         JTable t = new JTable();
         JTableHeader header = t.getTableHeader();
         header.setReorderingAllowed(false);
+        header.setBackground(new Color(240, 240, 240));
+        header.setForeground(Color.DARK_GRAY);
+        t.setRowHeight(25);
+        t.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        t.setShowGrid(true);
+        t.setGridColor(new Color(200, 200, 200));
         return t;
+    }
+
+    private JButton createStyledButton(String text) {
+        JButton button = new JButton(text);
+        button.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        button.setBackground(new Color(0, 120, 215));
+        button.setForeground(Color.WHITE);
+        button.setFocusPainted(false);
+        button.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(0, 100, 200), 1),
+                BorderFactory.createEmptyBorder(5, 10, 5, 10)
+        ));
+        return button;
+    }
+
+    private JLabel createLabel(String text) {
+        JLabel label = new JLabel(text);
+        label.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        label.setForeground(Color.DARK_GRAY);
+        return label;
     }
 
     public JTable getTable() {
         return table;
+    }
+
+    private void adjustColumnWidths() {
+        table.getColumnModel().getColumn(0).setPreferredWidth(50); // ID
+        table.getColumnModel().getColumn(1).setPreferredWidth(150); // Tên
+        table.getColumnModel().getColumn(2).setPreferredWidth(100); // SĐT
     }
 }
