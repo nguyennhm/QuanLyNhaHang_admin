@@ -16,10 +16,6 @@
     <orderEntry type="library" name="jakarta.activation-1.2.2-javadoc" level="project" />
     <orderEntry type="library" name="xchart-3.8.5-javadoc" level="project" />
     <orderEntry type="library" name="xchart-3.8.2" level="project" />
-    <orderEntry type="library" name="poi-ooxml-5.4.1" level="project" />
-    <orderEntry type="library" name="log4j-core-2.20.0" level="project" />
-    <orderEntry type="library" name="commons-compress-1.22" level="project" />
-    <orderEntry type="library" name="commons-io-2.11.0" level="project" />
     <orderEntry type="library" name="jxl" level="project" />
   </component>
 </module>
