@@ -56,8 +56,29 @@ public class NguyenLieuUpdateForm extends JFrame {
             }
         });
 
+        JButton btnNhapThem = createStyledButton("➕ Nhập thêm");
+        btnNhapThem.addActionListener(e -> {
+            try {
+                double themSoLuong = Double.parseDouble(tfSoLuong.getText());
+                int themGiaNhap = Integer.parseInt(tfGiaNhap.getText());
+
+                boolean ok = dao.congThemSoLuongVaGia(nguyenLieu.getId(), themSoLuong, themGiaNhap);
+                if (ok) {
+                    JOptionPane.showMessageDialog(this, "✅ Đã cộng thêm vào nguyên liệu!", "Thành công", JOptionPane.INFORMATION_MESSAGE);
+                    onUpdateSuccess.run();
+                    dispose();
+                } else {
+                    JOptionPane.showMessageDialog(this, "❌ Không thể cập nhật!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Lỗi dữ liệu: " + ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+
         JPanel bottom = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         bottom.setBackground(new Color(245, 245, 245));
+        bottom.add(btnNhapThem);
         bottom.add(btnLuu);
 
         add(formPanel, BorderLayout.CENTER);

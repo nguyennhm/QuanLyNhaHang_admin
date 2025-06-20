@@ -37,7 +37,7 @@ public class TaiKhoanDAO {
                 TaiKhoan tk = new TaiKhoan(
                         rs.getString("email"),
                         rs.getString("matKhau"),
-                        rs.getString("vaiTro"),
+                        rs.getString("vaitro"),
                         rs.getString("trangThai")
                 );
                 tk.setId_taikhoan(rs.getInt("id_taikhoan"));
@@ -55,7 +55,7 @@ public class TaiKhoanDAO {
         }
         try (Connection conn = JDBCUtil.getConnection();
              PreparedStatement stmt = conn.prepareStatement(
-                     "INSERT INTO taikhoan (email, matKhau, vaiTro, trangThai) VALUES (?, ?, ?, ?)",
+                     "INSERT INTO taikhoan (email, matKhau, vaitro, trangThai) VALUES (?, ?, ?, ?)",
                      PreparedStatement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, tk.getEmail());
             stmt.setString(2, tk.getMatKhau());
@@ -91,7 +91,7 @@ public class TaiKhoanDAO {
         if (kiemTraEmailTonTai(tk.getEmail())) {
             return false; // Email đã tồn tại
         }
-        String sql = "INSERT INTO taikhoan (email, matKhau, vaiTro, trangThai) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO taikhoan (email, matKhau, vaitro, trangThai) VALUES (?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, tk.getEmail());
             stmt.setString(2, tk.getMatKhau());
@@ -112,7 +112,7 @@ public class TaiKhoanDAO {
     }
 
     public boolean capNhatTaiKhoan(TaiKhoan tk) {
-        String sql = "UPDATE taikhoan SET email = ?, matKhau = ?, vaiTro = ?, trangThai = ? WHERE id_taikhoan = ?";
+        String sql = "UPDATE taikhoan SET email = ?, matKhau = ?, vaitro = ?, trangThai = ? WHERE id_taikhoan = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, tk.getEmail());
             stmt.setString(2, tk.getMatKhau());
@@ -146,7 +146,7 @@ public class TaiKhoanDAO {
                 TaiKhoan tk = new TaiKhoan(
                         rs.getString("email"),
                         rs.getString("matKhau"),
-                        rs.getString("vaiTro"),
+                        rs.getString("vaitro"),
                         rs.getString("trangThai")
                 );
                 tk.setId_taikhoan(rs.getInt("id_taikhoan"));
