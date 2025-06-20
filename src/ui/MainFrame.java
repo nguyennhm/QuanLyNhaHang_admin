@@ -29,7 +29,6 @@ public class MainFrame extends JFrame {
         menuPanel.setPreferredSize(new Dimension(220, 0));
         menuPanel.setBackground(new Color(44, 62, 80));
 
-        JButton btnDashboard = createMenuButton("Dashboard", "/dashboard.png");
         JButton btnTaiKhoan = createMenuButton("Quản lý tài khoản", "/user.png");
         JButton btnLuong = createMenuButton("Lương nhân viên", "/luong.jpg");
         JButton btnNhapSanPham = createMenuButton("Nhập sản phẩm", "/box.jpg");
@@ -38,14 +37,13 @@ public class MainFrame extends JFrame {
         JButton btnRanking = createMenuButton("Xếp hạng", "/ranking.png");
         JButton btnOrder = createMenuButton("Đơn hàng", "/order.png");
 
-        menuPanel.add(btnDashboard);
+        menuPanel.add(btnThongKe);
         menuPanel.add(btnTaiKhoan);
         menuPanel.add(btnNhapSanPham);
         menuPanel.add(btnRanking);
         menuPanel.add(btnOrder);
         menuPanel.add(btnLuong);
         menuPanel.add(btnThuMuc);
-        menuPanel.add(btnThongKe);
         add(menuPanel, BorderLayout.WEST);
 
         // ===== CONTENT HIỂN THỊ =====
@@ -57,7 +55,7 @@ public class MainFrame extends JFrame {
         showPanel(new ThongKePanel());
 
         // ===== XỬ LÝ NHẤN MENU =====
-        btnDashboard.addActionListener(e -> showPanel(new DashboardPanel()));
+        btnThongKe.addActionListener(e -> showPanel(new ThongKePanel()));
         btnTaiKhoan.addActionListener(e -> showPanel(new QuanLyTaiKhoanPanel()));
         btnNhapSanPham.addActionListener(e -> showPanel(new NhapSanPhamPanel()));
         btnRanking.addActionListener(e -> showPanel(new CapBacPanel()));
