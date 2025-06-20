@@ -96,7 +96,7 @@ public class TaiKhoanDAO {
             stmt.setString(1, tk.getEmail());
             stmt.setString(2, tk.getMatKhau());
             stmt.setString(3, tk.getVaiTro());
-            stmt.setString(4, tk.getTrangThai());
+            stmt.setString(4, "mo");
             int rows = stmt.executeUpdate();
             if (rows > 0) {
                 ResultSet rs = stmt.getGeneratedKeys();

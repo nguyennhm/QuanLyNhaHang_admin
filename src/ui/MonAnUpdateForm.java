@@ -19,7 +19,7 @@ import java.util.Map;
 public class MonAnUpdateForm extends JFrame {
     public MonAnUpdateForm(MonAn monAn, Runnable onSuccess) {
         setTitle("✏️ Cập nhật món ăn");
-        setSize(700, 600);
+        setSize(800, 600); // Tăng chiều rộng để chứa ảnh
         setLocationRelativeTo(null);
         getContentPane().setBackground(new Color(240, 240, 240));
         setLayout(new BorderLayout(10, 10));
@@ -41,14 +41,36 @@ public class MonAnUpdateForm extends JFrame {
         JTextField tfMoTa = new JTextField(monAn.getMoTa());
 
         // Ảnh
-        JLabel lblAnh = new JLabel(monAn.getHinhAnh());
+        JLabel lblAnh = new JLabel();
+        if (monAn.getHinhAnh() != null && !monAn.getHinhAnh().isEmpty()) {
+            ImageIcon imageIcon = new ImageIcon("src/image/" + monAn.getHinhAnh()); // Đường dẫn từ thư mục src/image
+            if (imageIcon.getImageLoadStatus() == MediaTracker.COMPLETE) {
+                Image img = imageIcon.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
+                lblAnh.setIcon(new ImageIcon(img));
+            } else {
+                lblAnh.setText("Không tải được ảnh: " + monAn.getHinhAnh());
+            }
+        } else {
+            lblAnh.setText("Chưa có ảnh");
+        }
+        lblAnh.setHorizontalAlignment(SwingConstants.CENTER);
+        lblAnh.setPreferredSize(new Dimension(150, 150));
+        lblAnh.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200)));
+
         JButton btnChonAnh = createStyledButton("📁 Chọn ảnh");
         final String[] hinhAnhFile = {monAn.getHinhAnh()};
         btnChonAnh.addActionListener(e -> {
-            JFileChooser chooser = new JFileChooser("./images");
+            JFileChooser chooser = new JFileChooser("src/image");
             if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
                 hinhAnhFile[0] = chooser.getSelectedFile().getName();
-                lblAnh.setText(hinhAnhFile[0]);
+                ImageIcon imageIcon = new ImageIcon("src/image/" + hinhAnhFile[0]); // Đường dẫn đúng với /
+                if (imageIcon.getImageLoadStatus() == MediaTracker.COMPLETE) {
+                    Image img = imageIcon.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
+                    lblAnh.setIcon(new ImageIcon(img));
+                    lblAnh.setText("");
+                } else {
+                    lblAnh.setText("Không tải được ảnh: " + hinhAnhFile[0]);
+                }
             }
         });
 
@@ -68,19 +90,24 @@ public class MonAnUpdateForm extends JFrame {
         // ===== Thêm các dòng vào form =====
         int row = 0;
         formPanel.add(createLabel("Tên món:"), gbcAt(gbc, 0, row));
-        formPanel.add(tfTen, gbcAt(gbc, 1, row++));
+        formPanel.add(tfTen, gbcAt(gbc, 1, row, 1, 1, 0.6));
+        formPanel.add(lblAnh, gbcAt(gbc, 2, row, 1, 4, 0.4)); // Đặt ảnh bên cạnh
+        row++;
 
         formPanel.add(createLabel("Giá:"), gbcAt(gbc, 0, row));
-        formPanel.add(tfGia, gbcAt(gbc, 1, row++));
+        formPanel.add(tfGia, gbcAt(gbc, 1, row, 1, 1, 0.6));
+        row++;
 
         formPanel.add(createLabel("Mô tả:"), gbcAt(gbc, 0, row));
-        formPanel.add(tfMoTa, gbcAt(gbc, 1, row++));
+        formPanel.add(tfMoTa, gbcAt(gbc, 1, row, 1, 1, 0.6));
+        row++;
 
         formPanel.add(createLabel("Danh mục:"), gbcAt(gbc, 0, row));
-        formPanel.add(cbDanhMuc, gbcAt(gbc, 1, row++));
+        formPanel.add(cbDanhMuc, gbcAt(gbc, 1, row, 1, 1, 0.6));
+        row++;
 
-        formPanel.add(btnChonAnh, gbcAt(gbc, 0, row));
-        formPanel.add(lblAnh, gbcAt(gbc, 1, row++));
+        formPanel.add(btnChonAnh, gbcAt(gbc, 0, row, 3, 1, 1.0)); // Nút chọn ảnh trải dài
+        row++;
 
         // ====== Nguyên liệu ======
         JPanel nguyenLieuPanel = new JPanel(new GridBagLayout());
@@ -168,6 +195,16 @@ public class MonAnUpdateForm extends JFrame {
         GridBagConstraints newGbc = (GridBagConstraints) gbc.clone();
         newGbc.gridx = x;
         newGbc.gridy = y;
+        return newGbc;
+    }
+
+    private GridBagConstraints gbcAt(GridBagConstraints gbc, int x, int y, int gridwidth, int gridheight, double weightx) {
+        GridBagConstraints newGbc = (GridBagConstraints) gbc.clone();
+        newGbc.gridx = x;
+        newGbc.gridy = y;
+        newGbc.gridwidth = gridwidth;
+        newGbc.gridheight = gridheight;
+        newGbc.weightx = weightx;
         return newGbc;
     }
 

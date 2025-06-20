@@ -158,14 +158,15 @@ public class LoginUI extends JFrame {
 
         if (tk != null && tk.isTrangThai().equals("mo") && tk.getVaiTro().equals("admin")) {
             JOptionPane.showMessageDialog(this, "✅ Đăng nhập thành công!");
-            dispose();
-            new MainFrame();
-            // TODO: Mở dashboard
+            dispose(); // Đóng hoàn toàn LoginUI
+            SwingUtilities.invokeLater(() -> {
+                MainFrame mainFrame = new MainFrame();
+                mainFrame.setVisible(true); // Mở MainFrame mới
+            });
         } else {
             JOptionPane.showMessageDialog(this, "❌ Email hoặc mật khẩu sai!");
         }
     }
-
     public static void main(String[] args) {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());

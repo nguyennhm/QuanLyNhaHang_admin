@@ -14,6 +14,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import java.awt.*;
+import java.io.File;
 import java.text.NumberFormat;
 import java.util.*;
 import java.util.List;
@@ -73,7 +74,7 @@ public class MonAnPanel extends JPanel {
 
     private void showFormThem() {
         JFrame f = new JFrame("➕ Thêm món ăn");
-        f.setSize(700, 600);
+        f.setSize(800, 600);
         f.getContentPane().setBackground(new Color(240, 240, 240));
         f.setLocationRelativeTo(this);
         f.setLayout(new BorderLayout(10, 10));
@@ -82,7 +83,12 @@ public class MonAnPanel extends JPanel {
         List<NguyenLieu> listNguyenLieu = nguyenLieuDAO.getAllNguyenLieu();
         Map<Integer, JTextField> mapSoLuong = new HashMap<>();
 
-        // === FORM món ăn ===
+        JPanel mainPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbcMain = new GridBagConstraints();
+        gbcMain.insets = new Insets(5, 5, 5, 5);
+        gbcMain.fill = GridBagConstraints.BOTH;
+        gbcMain.weightx = 1.0;
+
         JPanel formPanel = new JPanel(new GridBagLayout());
         formPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(new Color(150, 150, 150)), "Thông tin món ăn", TitledBorder.CENTER, TitledBorder.TOP, new Font("Segoe UI", Font.BOLD, 14), Color.DARK_GRAY));
         GridBagConstraints gbc = new GridBagConstraints();
@@ -93,14 +99,19 @@ public class MonAnPanel extends JPanel {
         JTextField tfGia = new JTextField();
         JTextField tfMoTa = new JTextField();
         JLabel lblAnh = new JLabel("Chưa chọn ảnh");
+        JLabel lblHinhAnh = new JLabel();
         JButton btnChonAnh = createStyledButton("📁 Chọn ảnh");
         final String[] hinhAnhFile = {""};
 
         btnChonAnh.addActionListener(e -> {
-            JFileChooser chooser = new JFileChooser("./images");
+            JFileChooser chooser = new JFileChooser("src/image");
             if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-                hinhAnhFile[0] = chooser.getSelectedFile().getName();
+                File selected = chooser.getSelectedFile();
+                hinhAnhFile[0] = selected.getName();
                 lblAnh.setText(hinhAnhFile[0]);
+                ImageIcon icon = new ImageIcon("src/image/" + hinhAnhFile[0]);
+                Image scaled = icon.getImage().getScaledInstance(150, 120, Image.SCALE_SMOOTH);
+                lblHinhAnh.setIcon(new ImageIcon(scaled));
             }
         });
 
@@ -127,7 +138,12 @@ public class MonAnPanel extends JPanel {
         formPanel.add(btnChonAnh, gbcAt(gbc, 0, row));
         formPanel.add(lblAnh, gbcAt(gbc, 1, row++));
 
-        // === DANH SÁCH NGUYÊN LIỆU ===
+        formPanel.add(lblHinhAnh, gbcAt(gbc, 1, row++));
+
+        gbcMain.gridx = 0;
+        gbcMain.gridy = 0;
+        mainPanel.add(formPanel, gbcMain);
+
         JPanel nguyenLieuPanel = new JPanel(new GridBagLayout());
         nguyenLieuPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(new Color(150, 150, 150)), "Nguyên liệu sử dụng", TitledBorder.CENTER, TitledBorder.TOP, new Font("Segoe UI", Font.BOLD, 12), Color.DARK_GRAY));
         GridBagConstraints gbcNL = new GridBagConstraints();
@@ -140,16 +156,17 @@ public class MonAnPanel extends JPanel {
             JTextField tf = new JTextField(10);
             mapSoLuong.put(nl.getId(), tf);
 
-            gbcNL.gridx = 0; gbcNL.gridy = rowNL; gbcNL.weightx = 0.5;
+            gbcNL.gridx = 0; gbcNL.gridy = rowNL;
             nguyenLieuPanel.add(lbl, gbcNL);
-            gbcNL.gridx = 1; gbcNL.weightx = 0.5;
+            gbcNL.gridx = 1;
             nguyenLieuPanel.add(tf, gbcNL);
             rowNL++;
         }
 
         JScrollPane scrollPane = new JScrollPane(nguyenLieuPanel);
+        gbcMain.gridy = 1;
+        mainPanel.add(scrollPane, gbcMain);
 
-        // === NÚT LƯU ===
         JButton btnLuu = createStyledButton("💾 Lưu");
         btnLuu.setPreferredSize(new Dimension(120, 35));
         btnLuu.addActionListener(e -> {
@@ -175,7 +192,7 @@ public class MonAnPanel extends JPanel {
                                 mal.setMonAnId(mon.getId());
                                 mal.setNguyenLieuId(entry.getKey());
                                 mal.setSoLuongCan(soLuong);
-                                // TODO: Thêm dòng này nếu có DAO: monAnDAO.themNguyenLieu(mal);
+                                // TODO: monAnDAO.themNguyenLieu(mal);
                             }
                         } catch (NumberFormatException ignored) {}
                     }
@@ -194,8 +211,7 @@ public class MonAnPanel extends JPanel {
         bottom.setBackground(new Color(245, 245, 245));
         bottom.add(btnLuu);
 
-        f.add(formPanel, BorderLayout.NORTH);
-        f.add(scrollPane, BorderLayout.CENTER);
+        f.add(new JScrollPane(mainPanel), BorderLayout.CENTER);
         f.add(bottom, BorderLayout.SOUTH);
         f.setVisible(true);
     }

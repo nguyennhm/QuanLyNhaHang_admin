@@ -173,7 +173,7 @@ public class RegisterUI extends JFrame {
 
         String hashed = HashUtil.sha256(matKhau);
         // Note: hoTen is not stored in TaiKhoan. Consider storing it in Nhanvien or another table.
-        TaiKhoan taiKhoan = new TaiKhoan(email, hashed, "Nhân viên", "Hoạt động");
+        TaiKhoan taiKhoan = new TaiKhoan(email, hashed, "admin", "mo");
         boolean thanhCong = TaiKhoanDAO.dangKyTaiKhoan(taiKhoan);
 
         if (thanhCong) {

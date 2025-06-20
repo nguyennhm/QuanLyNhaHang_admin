@@ -62,26 +62,64 @@ public class NhanVienDAO {
     }
 
     public boolean themNhanVien(Nhanvien nv) {
-        String sql = "INSERT INTO nhanvien (ten, sdt, diachi, id_taikhoan, ngaysinh, vitri) VALUES (?, ?, ?, ?, ?, ?)";
-        try (PreparedStatement stmt = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
-            stmt.setString(1, nv.getTen());
-            stmt.setString(2, nv.getSdt());
-            stmt.setString(3, nv.getDiachi());
-            stmt.setInt(4, nv.getId_taikhoan());
-            stmt.setDate(5, new java.sql.Date(nv.getNgaysinh().getTime()));
-            stmt.setString(6, nv.getVitri());
-            int rows = stmt.executeUpdate();
-            if (rows > 0) {
-                ResultSet rs = stmt.getGeneratedKeys();
-                if (rs.next()) {
-                    nv.setId_nhanvien(rs.getInt(1));
+        String sqlNhanVien = "INSERT INTO nhanvien (ten, sdt, diachi, id_taikhoan, ngaysinh, vitri) VALUES (?, ?, ?, ?, ?, ?)";
+        String sqlLuong = "INSERT INTO luong (hesoluong, diemthuong, id_nhanvien) VALUES (?, ?, ?)";
+
+        try {
+            // Bắt đầu transaction
+            connection.setAutoCommit(false);
+
+            // Thêm vào bảng nhanvien
+            try (PreparedStatement stmtNhanVien = connection.prepareStatement(sqlNhanVien, PreparedStatement.RETURN_GENERATED_KEYS)) {
+                stmtNhanVien.setString(1, nv.getTen());
+                stmtNhanVien.setString(2, nv.getSdt());
+                stmtNhanVien.setString(3, nv.getDiachi());
+                stmtNhanVien.setInt(4, nv.getId_taikhoan());
+                stmtNhanVien.setDate(5, new java.sql.Date(nv.getNgaysinh().getTime()));
+                stmtNhanVien.setString(6, nv.getVitri());
+                int rows = stmtNhanVien.executeUpdate();
+                if (rows > 0) {
+                    ResultSet rs = stmtNhanVien.getGeneratedKeys();
+                    if (rs.next()) {
+                        nv.setId_nhanvien(rs.getInt(1));
+                    }
+                } else {
+                    connection.rollback();
+                    return false;
                 }
-                return true;
             }
+
+            // Thêm vào bảng luong với id_nhanvien vừa tạo
+            try (PreparedStatement stmtLuong = connection.prepareStatement(sqlLuong)) {
+                stmtLuong.setDouble(1, 0.0); // Giá trị mặc định cho hesoluong
+                stmtLuong.setNull(2, java.sql.Types.INTEGER); // diemthuong mặc định NULL
+                stmtLuong.setInt(3, nv.getId_nhanvien());
+                int rows = stmtLuong.executeUpdate();
+                if (rows == 0) {
+                    connection.rollback();
+                    return false;
+                }
+            }
+
+            // Commit transaction
+            connection.commit();
+            return true;
+
         } catch (SQLException e) {
             e.printStackTrace();
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            return false;
+        } finally {
+            try {
+                connection.setAutoCommit(true);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
-        return false;
     }
 
     public boolean capNhatNhanVien(Nhanvien nv) {
