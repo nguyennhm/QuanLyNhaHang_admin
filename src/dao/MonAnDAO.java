@@ -28,7 +28,6 @@ public class MonAnDAO {
                 mon.setMoTa(rs.getString("moTa"));
                 mon.setHinhAnh(rs.getString("hinhAnh"));
                 mon.setId_thumuc(rs.getInt("id_thumuc"));
-                mon.setTonKhaDung(rs.getInt("tonKhaDung"));
                 list.add(mon);
             }
         } catch (SQLException e) {
@@ -75,6 +74,29 @@ public class MonAnDAO {
         }
         return false;
     }
+
+    public void capNhatTrangThaiMonAnTheoNguyenLieu() {
+        String sql = """
+        UPDATE monan m
+        SET m.trangThai = CASE
+            WHEN EXISTS (
+                SELECT 1
+                FROM monan_nguyenlieu ml
+                JOIN nguyenlieu nl ON ml.nguyenLieuid = nl.id
+                WHERE ml.monAnid = m.id
+                AND nl.soLuongTon < ml.soLuongCan
+            ) THEN 'Hết'
+            ELSE 'Còn'
+        END
+    """;
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public MonAn getMonAnById(int id) {
         String sql = "SELECT * FROM monan WHERE id = ?";

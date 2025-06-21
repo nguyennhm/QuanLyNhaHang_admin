@@ -1,5 +1,9 @@
 package ui;
 
+import dao.MonAnDAO;
+import utils.JDBCUtil;
+import utils.TrangThaiMonAnScheduler;
+
 import javax.swing.*;
 import java.awt.*;
 import java.net.URL;
@@ -63,6 +67,12 @@ public class MainFrame extends JFrame {
         btnLuong.addActionListener(e -> showPanel(new LuongPanel()));
         btnThuMuc.addActionListener(e -> showPanel(new ThumucMonAnPanel()));
         btnThongKe.addActionListener(e -> showPanel(new ThongKePanel()));
+
+        // ===== KHỞI ĐỘNG TỰ ĐỘNG CẬP NHẬT TRẠNG THÁI MÓN ĂN =====
+        MonAnDAO monAnDAO = new MonAnDAO(JDBCUtil.getConnection());
+        TrangThaiMonAnScheduler scheduler = new TrangThaiMonAnScheduler(monAnDAO);
+        scheduler.start();
+
 
         setVisible(true);
     }

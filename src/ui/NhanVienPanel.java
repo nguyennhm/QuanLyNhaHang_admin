@@ -104,7 +104,7 @@ public class NhanVienPanel extends JPanel {
         JTextField tfNgaySinh = new JTextField(20);
         JTextField tfEmail = new JTextField(20);
         JPasswordField tfMatKhau = new JPasswordField(20);
-        JComboBox<String> cbVaiTro = new JComboBox<>(new String[]{"Nhân viên", "admin"});
+        JComboBox<String> cbVaiTro = new JComboBox<>(new String[]{"nhanvien", "admin"});
 
         gbc.gridx = 0; gbc.gridy = 0;
         formPanel.add(createStyledLabel("Tên:"), gbc);
@@ -216,7 +216,7 @@ public class NhanVienPanel extends JPanel {
         JTextField tfViTri = new JTextField(nv.getVitri());
         JTextField tfEmail = new JTextField(tk != null ? tk.getEmail() : "");
         JPasswordField tfMatKhau = new JPasswordField();
-        JComboBox<String> cbVaiTro = new JComboBox<>(new String[]{"Nhân viên", "admin"});
+        JComboBox<String> cbVaiTro = new JComboBox<>(new String[]{"nhanvien", "admin"});
         if (tk != null) cbVaiTro.setSelectedItem(tk.getVaiTro());
 
         formPanel.add(createStyledLabel("Tên nhân viên:"));
