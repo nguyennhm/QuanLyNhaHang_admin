@@ -1,6 +1,7 @@
 package ui;
 
 import dao.MonAnDAO;
+import dao.MonAnNguyenLieuDAO;
 import dao.NguyenLieuDAO;
 import dao.ThuMucMonAnDAO;
 import model.MonAn;
@@ -24,14 +25,19 @@ public class MonAnPanel extends JPanel {
     private MonAnDAO monAnDAO;
     private NguyenLieuDAO nguyenLieuDAO;
     private ThuMucMonAnDAO thuMucMonAnDAO;
+    private MonAnNguyenLieuDAO monAnNguyenLieuDAO;
 
     public MonAnPanel() {
         monAnDAO = new MonAnDAO(JDBCUtil.getConnection());
         nguyenLieuDAO = new NguyenLieuDAO(JDBCUtil.getConnection());
         thuMucMonAnDAO = new ThuMucMonAnDAO(JDBCUtil.getConnection());
+        monAnNguyenLieuDAO = new MonAnNguyenLieuDAO(JDBCUtil.getConnection());
 
         setLayout(new BorderLayout());
-        setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(new Color(150, 150, 150)), "Danh sách món ăn", TitledBorder.CENTER, TitledBorder.TOP, new Font("Segoe UI", Font.BOLD, 14), Color.DARK_GRAY));
+        setBorder(BorderFactory.createTitledBorder(
+                BorderFactory.createLineBorder(new Color(150, 150, 150)),
+                "Danh sách món ăn", TitledBorder.CENTER, TitledBorder.TOP,
+                new Font("Segoe UI", Font.BOLD, 14), Color.DARK_GRAY));
 
         table = createStyledTable();
         reloadTable();
@@ -40,9 +46,13 @@ public class MonAnPanel extends JPanel {
         JButton btnThem = createStyledButton("➕ Thêm món ăn");
         btnThem.addActionListener(e -> showFormThem());
 
+        JButton btnXoa = createStyledButton("🗑 Xóa món");
+        btnXoa.addActionListener(e -> xoaMonAn());
+
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         btnPanel.setBackground(new Color(245, 245, 245));
         btnPanel.add(btnThem);
+        btnPanel.add(btnXoa);
         add(btnPanel, BorderLayout.SOUTH);
     }
 
@@ -72,6 +82,34 @@ public class MonAnPanel extends JPanel {
         adjustColumnWidths();
     }
 
+    private void xoaMonAn() {
+        int row = table.getSelectedRow();
+        if (row == -1) {
+            JOptionPane.showMessageDialog(this, "❗ Vui lòng chọn món ăn cần xóa!", "Chưa chọn", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        int confirm = JOptionPane.showConfirmDialog(this,
+                "Bạn có chắc muốn xóa món ăn này không?\nTất cả nguyên liệu liên quan cũng sẽ bị xóa!",
+                "Xác nhận xóa",
+                JOptionPane.YES_NO_OPTION);
+
+        if (confirm != JOptionPane.YES_OPTION) return;
+
+        int monAnId = (int) table.getValueAt(row, 0);
+
+        boolean xoaNL = monAnNguyenLieuDAO.xoaNguyenLieuTheoMonAn(monAnId);
+        boolean xoaMon = monAnDAO.xoaMonAn(monAnId);
+
+        if (xoaMon) {
+            JOptionPane.showMessageDialog(this, "✅ Đã xóa món ăn và nguyên liệu liên quan!");
+            reloadTable();
+        } else {
+            JOptionPane.showMessageDialog(this, "❌ Xóa thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    // ========== showFormThem  ==========
     private void showFormThem() {
         JFrame f = new JFrame("➕ Thêm món ăn");
         f.setSize(800, 600);
@@ -90,7 +128,11 @@ public class MonAnPanel extends JPanel {
         gbcMain.weightx = 1.0;
 
         JPanel formPanel = new JPanel(new GridBagLayout());
-        formPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(new Color(150, 150, 150)), "Thông tin món ăn", TitledBorder.CENTER, TitledBorder.TOP, new Font("Segoe UI", Font.BOLD, 14), Color.DARK_GRAY));
+        formPanel.setBorder(BorderFactory.createTitledBorder(
+                BorderFactory.createLineBorder(new Color(150, 150, 150)),
+                "Thông tin món ăn", TitledBorder.CENTER, TitledBorder.TOP,
+                new Font("Segoe UI", Font.BOLD, 14), Color.DARK_GRAY));
+
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -145,7 +187,10 @@ public class MonAnPanel extends JPanel {
         mainPanel.add(formPanel, gbcMain);
 
         JPanel nguyenLieuPanel = new JPanel(new GridBagLayout());
-        nguyenLieuPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(new Color(150, 150, 150)), "Nguyên liệu sử dụng", TitledBorder.CENTER, TitledBorder.TOP, new Font("Segoe UI", Font.BOLD, 12), Color.DARK_GRAY));
+        nguyenLieuPanel.setBorder(BorderFactory.createTitledBorder(
+                BorderFactory.createLineBorder(new Color(150, 150, 150)),
+                "Nguyên liệu sử dụng", TitledBorder.CENTER, TitledBorder.TOP,
+                new Font("Segoe UI", Font.BOLD, 12), Color.DARK_GRAY));
         GridBagConstraints gbcNL = new GridBagConstraints();
         gbcNL.insets = new Insets(3, 10, 3, 10);
         gbcNL.fill = GridBagConstraints.HORIZONTAL;
@@ -184,18 +229,21 @@ public class MonAnPanel extends JPanel {
 
                 boolean ok = monAnDAO.themMonAn(mon);
                 if (ok) {
+                    int monAnId = mon.getId(); // lấy id món ăn vừa thêm
+
                     for (Map.Entry<Integer, JTextField> entry : mapSoLuong.entrySet()) {
                         try {
-                            int soLuong = Integer.parseInt(entry.getValue().getText());
+                            double soLuong = Double.parseDouble(entry.getValue().getText());
                             if (soLuong > 0) {
                                 MonAnNguyenLieu mal = new MonAnNguyenLieu();
-                                mal.setMonAnId(mon.getId());
+                                mal.setMonAnId(monAnId);
                                 mal.setNguyenLieuId(entry.getKey());
                                 mal.setSoLuongCan(soLuong);
-                                // TODO: monAnDAO.themNguyenLieu(mal);
+                                monAnNguyenLieuDAO.themMonAnNguyenLieu(mal); // lưu vào DB
                             }
                         } catch (NumberFormatException ignored) {}
                     }
+
                     JOptionPane.showMessageDialog(f, "✅ Thêm món thành công!", "Thành công", JOptionPane.INFORMATION_MESSAGE);
                     reloadTable();
                     f.dispose();
@@ -216,6 +264,7 @@ public class MonAnPanel extends JPanel {
         f.setVisible(true);
     }
 
+    // =========================== Các hàm phụ trợ ===========================
     private GridBagConstraints gbcAt(GridBagConstraints gbc, int x, int y) {
         gbc.gridx = x;
         gbc.gridy = y;

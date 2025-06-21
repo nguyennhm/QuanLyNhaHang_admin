@@ -81,6 +81,8 @@ public class MonAnNguyenLieuDAO {
         return false;
     }
 
+
+
     public boolean capNhatSoLuong(int monAnId, int nguyenLieuId, double soLuongMoi) {
         String sql = "UPDATE monan_nguyenlieu SET soLuongCan = ? WHERE monAnid = ? AND nguyenLieuid = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
